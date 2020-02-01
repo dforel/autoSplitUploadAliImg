@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<title>自动切分视频上传阿里图床工具</title> 
+	<script src="/js/jquery.1.11.3.min.js" ></script>
+	<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="\bootstrap-3.3.7-dist\css\bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+ 
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script src="/bootstrap-3.3.7-dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<link href="/bootstrap-switch/bootstrap-switch.min.css" rel="stylesheet"> 
+    <script src="/bootstrap-switch/bootstrap-switch.min.js"></script>
+
+    <link href="/toastr/toastr.min.css" rel="stylesheet" type="text/css" />  
+    <script src="/toastr/toastr.min.js"></script>
+
+    <link href="/fileinput/css/fileinput.min.css" rel="stylesheet"> 
+    <script src="/fileinput/fileinput.min.js"></script>
+    <script src="/fileinput/locales/zh.js"></script>
+</head>
+<body>
+   
+<div class="container">
+
+	<div class="page-header">
+	  <h1>自动切分视频上传阿里图床工具</h1>
+	  <p class="lead">由<a href="https://xhvps.info">xhvps.info</a>开发及维护</p>
+	  <p class="lead">注意，单个分片不能超过5M，否则会上传失败。可以将超过5M的上传到自己的服务器代替。</p>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">第一步：上传视频【可跳过】</h3>
+		</div>
+		<div class="panel-body"> 
+			<input type="file" name="mp4File" id="mp4_file" multiple class="file-loading" />
+		</div>
+    </div>   
+    
+    <div class="panel panel-default">
+            <!-- Default panel contents -->
+        <div class="panel-heading">上传的视频列表</div> 
+        
+        <!-- Table -->
+        <table class="table">
+            <thead><td>文件名</td><td>存储路径</td><td>操作</td></thead>
+            <tbody id="ruleTable">
+                <!-- <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td><button type="button" id="delChoose" class="btn btn-danger">删除</button> </td>
+                </tr> -->
+            </tbody>
+        </table> 
+    </div>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">第二步：视频切分【可跳过】</div> 
+        <div class="panel-body">   
+            <div style="margin-top: 20px">
+                
+            </div>
+			<div style="margin-top: 20px">
+                    输入文件路径:	<input type="text" id="inputPath" style="width: 400px"></input> 
+                    <button type="button" id="checkSplit" class="btn btn-primary">文件检查</button>
+			</div>
+			<div style="margin-top: 20px">
+					临时分片文件:	<input type="text" id="splitPath" style="width: 400px"></input>
+            </div>
+            
+			<div style="margin-top: 20px">
+                    分片参数预览:	<textarea type="text" id="splitParamPreView" style="width: 80%"></textarea>
+            </div>
+            
+            <div style="margin-top: 20px">
+                <button type="button" id="startSplit" class="btn btn-success">开始分片</button>
+            </div>  
+
+			<div style="margin-top: 50px">
+                    分片日志查看:	
+                    <textarea type="text" id="splitLog" style="width: 80%;height: 400px;" 
+                    onpropertychange="this.scrollTop   =   this.scrollHeight " οnfοcus="this.scrollTop   =   this.scrollHeight "></textarea>
+            </div>
+
+			<div style="margin-top: 20px">
+                    m3u8文件输出:	<input type="text" id="m3u8Path" style="width: 80%"></input>
+            </div>
+		</div>
+    </div>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">第三步：分片上传图床</div> 
+        <div class="panel-body">   
+            <div style="margin-top: 20px">
+                
+            </div>
+            <div style="margin-top: 20px">
+                    m3u8文件输入:	<input type="text" id="m3u8Input" style="width: 80%"></input>  
+            </div>
+            <div style="margin-top: 20px">
+                    m3u8分片目录:	<input type="text" id="splitPathInput" style="width: 80%"></input>
+            </div>
+            
+            <div style="margin-top: 20px">
+                <button type="button" id="startUpload" class="btn btn-success">开始上传</button>
+            </div>
+                
+            <div style="margin-top: 20px">
+                    上传日志查看:	
+                    <textarea type="text" id="uoloadLog" style="width: 80%;height: 400px;" 
+                    onpropertychange="this.scrollTop   =   this.scrollHeight " οnfοcus="this.scrollTop   =   this.scrollHeight "></textarea>
+            </div>
+
+            
+            <div style="margin-top: 20px">
+                    成果m3u8文件:	<input type="text" id="resultM3u8" style="width: 80%"></input>  
+                    <button type="button" id="down" class="btn btn-success">下载</button> 
+                    <button type="button" id="play" class="btn btn-success">播放</button>
+            </div>
+            
+    
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">关于</div> 
+        <div class="panel-body">   
+            <div style="margin-top: 20px">
+                本工具由dforel开发，仅用于测试，请勿滥用@2020@宅
+            </div>
+        </div>
+    </div>
+
+</div> <!-- /container --> 
+<script>
+$(function () {
+    
+    toastr.options.positionClass = 'toast-bottom-right';
+
+    // with plugin options
+    $("#mp4_file").fileinput({
+        language: 'zh', //设置语言
+        uploadUrl: "/uploadFile", //上传的地址
+        allowedFileExtensions: ['mp4'],//接收的文件后缀
+        showUpload: true, //是否显示上传按钮
+        showCaption: false,//是否显示标题
+        browseClass: "btn btn-primary", //按钮样式     
+        //dropZoneEnabled: false,//是否显示拖拽区域
+        //minImageWidth: 50, //图片的最小宽度
+        //minImageHeight: 50,//图片的最小高度
+        //maxImageWidth: 1000,//图片的最大宽度
+        //maxImageHeight: 1000,//图片的最大高度
+        //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+        //minFileCount: 0,
+        maxFileCount: 5, //表示允许同时上传的最大文件个数
+        enctype: 'multipart/form-data',
+        validateInitialCount:true,
+        previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+    }).on('fileuploaded', function (event, data) {//异步上传成功结果处理
+        getFileList();
+    });
+
+    function getFileList(){
+        $.get("/getFileList", function(json){ 
+            try { 
+               if(json.result){
+                    var array=  json.data;
+                    $('#ruleTable').empty();
+                    for (let index = 0; index < array.length; index++) {
+                        const item = array[index];
+                        var trHTML = '<tr id="line_'+item.id+'"><td>'+item.fileName+'</td><td>'+item.filePath+'</td>'+ 
+                                    '<td><button type="button" target-id="'+item.id+'" class="removeWebRule btn btn-danger">删除</button>  </td></tr>';
+                        $('#ruleTable').append(trHTML); 
+                    } 
+                    $(".removeWebRule").on('click', function() {
+                        var delId = $(this).attr("target-id");
+                        deleFile(delId)
+                    }); 
+               }
+            } catch (error) {
+                console.error(error)
+            }
+        });
+    }
+
+    function deleFile(id) {
+        $.ajax({
+            type: 'DELETE', 
+            dataType : 'json',
+            url : '/deleteFile/'+id+"/",
+            success : function(data,textStatus,jqXHR){
+                getFileList();
+            }
+        });
+    }
+
+    $("#checkSplit").click(function(event) {
+        var filePath=$("#inputPath").val().trim();
+        $.ajax({
+            type: 'GET', 
+            dataType : 'json',
+            url : '/checkFile',
+            data:{filePath:filePath},
+            success : function(json,textStatus,jqXHR){
+                if(json.result){
+                    $("#splitPath").val(json.data.tempPath);
+                    $("#splitParamPreView").val(json.data.preParam);
+                }else{
+                    alert(json.msg);
+                }
+            }
+        });
+    })
+
+    $("#startSplit").click(function(event) {
+        var filePath=$("#inputPath").val().trim();
+        var splitPath=$("#splitPath").val().trim();
+        $.ajax({
+            type: 'GET', 
+            dataType : 'json',
+            url : '/startSplit',
+            data:{filePath:filePath,tempPath:splitPath},
+            success : function(json,textStatus,jqXHR){
+                if(json.result){
+                    var workId = json.data
+                    loadLog(workId)
+                }else{
+                    toastr.warning(json.msg);
+                }
+            }
+        });
+    })
+
+    $("#startUpload").click(function(event) {
+        var m3u8Input=$("#m3u8Input").val().trim();
+        var splitPathInput=$("#splitPathInput").val().trim();
+        $.ajax({
+            type: 'GET', 
+            dataType : 'json',
+            url : '/startUpload',
+            data:{m3u8Input:m3u8Input,splitPathInput:splitPathInput},
+            success : function(json,textStatus,jqXHR){
+                if(json.result){
+                    var workId = json.data
+                    loadUploadLog(workId)
+                }else{
+                    toastr.warning(json.msg);
+                }
+            }
+        });
+    })
+
+    $("#play").click(function(event) { 
+        var newWeb=window.open('_blank');
+        newWeb.location= "/play?filename="+$("#resultM3u8").val();
+    })
+
+    $("#down").click(function(event) { 
+        window.location.href = $("#resultM3u8").val();
+    })
+
+    function loadLog(workId) {
+        setTimeout(() => {
+            $.ajax({
+                type: 'GET', 
+                dataType : 'json',
+                url : '/getSplitStatusAndLog',
+                data:{workId:workId},
+                success : function(json,textStatus,jqXHR){
+                    if(json.result){
+                        console.log(json.data)
+                        if(json.data.status!="FINISHED"){
+                            loadLog(workId);
+                        }else{
+                            getM3u8Path(workId);
+                            toastr.success('分片执行完毕！');
+                        }
+                        var logs = json.data.logs;
+                        var text = "";
+                        for (let index = 0; index < logs.length; index++) {
+                            const element = logs[index];
+                            text+=element+"\n";
+                        }
+                        $("#splitLog").val(text);
+                        document.getElementById("splitLog").scrollTop=document.getElementById("splitLog").scrollHeight;
+                        
+                    }else{
+                        toastr.warning(json.msg);
+                        loadLog(workId);
+                    }
+                }
+            });
+        }, 1000);
+    }
+ 
+    function getM3u8Path(workId){
+        $.get("/getM3u8?workId="+workId, function(json){ 
+            try { 
+                if(json.result){
+                    var m3u8=  json.data.m3u8;
+                    $("#m3u8Path").val(m3u8)
+                }
+            } catch (error) {
+                // console.error(error)
+                toastr.warning(error);
+            }
+        });
+    }
+
+    function loadUploadLog(workId) {
+        setTimeout(() => {
+            $.ajax({
+                type: 'GET', 
+                dataType : 'json',
+                url : '/getUploadStatusAndLog',
+                data:{workId:workId},
+                success : function(json,textStatus,jqXHR){
+                    if(json.result){
+                        console.log(json.data)
+                        if(json.data.status=="FINISHED"){
+                            getUploadM3u8Path(workId);
+                            toastr.success('分片执行完毕！');
+                        }else{
+                            loadUploadLog(workId);
+                        }
+                        var logs = json.data.logs;
+                        var text = "";
+                        for (let index = 0; index < logs.length; index++) {
+                            const element = logs[index];
+                            text+=element+"\n";
+                        }
+                        $("#uoloadLog").val(text);
+                        document.getElementById("uoloadLog").scrollTop=document.getElementById("uoloadLog").scrollHeight;
+                        
+                    }else{
+                        toastr.warning(json.msg);
+                        loadLog(workId);
+                    }
+                }
+            });
+        }, 1000);
+    }
+
+    function getUploadM3u8Path(workId){
+        $.get("/getUploadM3u8?workId="+workId, function(json){ 
+            try { 
+                if(json.result){
+                    var m3u8=  json.data.m3u8;
+                    $("#resultM3u8").val(m3u8)
+                }
+            } catch (error) {
+                // console.error(error)
+                toastr.error(error);
+            }
+        });
+    }
+
+     
+
+    getFileList();
+});
+
+
+
+</script>
+</body>
+</html>
