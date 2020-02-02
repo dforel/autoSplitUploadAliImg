@@ -74,6 +74,9 @@ def upload_file():
         # f.filename 
         (filepath, ext) = os.path.splitext(f.filename) 
         filename=getCurrentTime()
+        path = os.path.join(os.path.dirname(__file__), 'upload')
+        if not os.path.exists(path):
+            os.makedirs(path) 
         upload_path = os.path.join(os.path.dirname(__file__), 'upload', filename+ext)
         f.save(upload_path)
 
@@ -168,7 +171,7 @@ def downTemp():
         return resultData(False,"只能下载temp文件夹里的文件","")
     upload_path = os.path.join(os.path.dirname(__file__), 'temp') 
     if os.path.isfile(fileName):
-        First_Path,Second_Name=os.path.split(upload_path+"\\"+shortName) 
+        First_Path,Second_Name=os.path.split(upload_path+"/"+shortName) 
         response = make_response(send_from_directory(First_Path, Second_Name))
         return response
     else:
@@ -178,8 +181,8 @@ def downTemp():
 def getTempPath(fileName): 
     # fileName=request.args.get("filename")
     #fileName="E:\\work\\2020\\autoSplitUploadAliImg\\1temp\\20200201121415/20200201113731_out_out_out.m3u8"
-    fileName = os.path.abspath(fileName) 
-    print(fileName)
+    #fileName = os.path.abspath(fileName) 
+    #print(fileName)
     upload_path = os.path.join(os.path.dirname(__file__), 'temp\\') 
     print(upload_path)
     if fileName:

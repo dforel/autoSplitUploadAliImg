@@ -60,7 +60,7 @@ class Shell(object):
     def run_background(self): 
         # 获取临时文件的文件号
         fileno = self.out_temp.fileno()
-        self._process = subprocess.Popen(self.cmd, stdout=fileno, stderr=fileno)
+        self._process = subprocess.Popen(self.cmd, stdout=fileno, stderr=fileno, shell=True)
         t1 = Thread(target=self.saveLog)
         t1.start() 
 
