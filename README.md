@@ -1,5 +1,8 @@
 # 自动裁切视频并且上传。
 
+python版本：python3.6
+ffmpeg版本：4.1.3
+
 ### 安装步骤【window版】
 
     1.下载ffmpeg，将ffmpeg放到windows的path中。
