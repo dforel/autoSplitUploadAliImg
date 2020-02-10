@@ -12,7 +12,7 @@ app = Flask(__name__,static_url_path='',root_path='./')
 app.config['UPLOAD_PATH'] = os.path.join(app.root_path, 'uploads') 
 
 ## 切割参数
-preParam="ffmpeg -i {filePathName} -codec copy -map 0 -f segment -segment_list \"{tempPath}/{fileName}.m3u8\" -segment_time 3 \"{tempPath}/{fileName}_%d.ts\""
+preParam="ffmpeg -i {filePathName} -codec copy -map 0 -bsf:v h264_mp4toannexb -f segment -segment_list \"{tempPath}/{fileName}.m3u8\" -segment_time 3 \"{tempPath}/{fileName}_%d.ts\""
 
 @app.route('/')
 def main():
