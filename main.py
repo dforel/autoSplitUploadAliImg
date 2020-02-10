@@ -183,7 +183,7 @@ def getTempPath(fileName):
     #fileName="E:\\work\\2020\\autoSplitUploadAliImg\\1temp\\20200201121415/20200201113731_out_out_out.m3u8"
     #fileName = os.path.abspath(fileName) 
     #print(fileName)
-    upload_path = os.path.join(os.path.dirname(__file__), 'temp\\') 
+    upload_path = os.path.join(os.path.dirname(__file__), 'temp/') 
     print(upload_path)
     if fileName:
         isHave= fileName.find(upload_path)
